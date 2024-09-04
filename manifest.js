@@ -23,7 +23,7 @@ const heightOrificioValue= document.getElementById('heightOrificioValue')
 const widthControl= document.getElementById('width')
 const widthSlider = document.getElementById('widthSlider');
 const widthValue= document.getElementById('widthValue');
-
+let startTime = null;
 
 
 
@@ -35,9 +35,11 @@ heightControl.max = maxDepth;
 heightControl.value = maxDepth;
 heightSlider.max = maxDepth;
 const orificeType= dadosReservatorio.tipoOrificio;
+const reservoirType = data.tipoReservatorio;
 
 
-const timeStep = 0.1; // Passo de tempo (s)
+
+const timeStep = 1; // Passo de tempo (s)
 let fluidHeight = canvas.height; // Altura inicial do fluido
 let totalTime = 0; // Tempo total para esvaziar
 let isPaused = true; // Estado da simulação (inicialmente pausado)
@@ -56,6 +58,7 @@ function calculateFlowRateAndTime() {
     const width= parseFloat(widthControl.value)/100;
     const initialHeight = parseFloat(heightControl.value);
     let outletArea;
+    let reservoirArea;
 
     if (orificeType=="circular"){
         outletArea= Math.PI * Math.pow(radius, 2);
@@ -63,26 +66,29 @@ function calculateFlowRateAndTime() {
     else if (orificeType=="retangular"){
         outletArea = heightOrificio * width;
     }
-    
 
-  
+    if (reservoirType=="circular"){
+        const raioReservoir= data.raio;
+        reservoirArea= raioReservoir* raioReservoir* Math.PI;
+    }
+
+    else if (reservoirType=="retangular"){
+        const larguraReservoir= data.largura;
+        const comprimentoReservoir= data.comprimento;
+        reservoirArea= larguraReservoir * comprimentoReservoir;
+    }
+
+
+    const numeradorTotalTime= 2* reservoirArea * Math.sqrt(initialHeight);
+    const denominadorTotalTime= Cd* outletArea* Math.sqrt(2 * gravity);
+
     // Cálculo da vazão
     const flowRate = Cd * outletArea * Math.sqrt(2 * gravity * initialHeight);
     
     // Cálculo do tempo total para esvaziar o reservatório
-    let time = 0;
-    let height = initialHeight;
+    let time= numeradorTotalTime / denominadorTotalTime;
 
-    
-
-    while (height > 0) {
-        const deltaHeight = (flowRate * timeStep) / (canvas.width / initialHeight); // Corrigido
-        height -= deltaHeight;
-
-        if (height < 0) height = 0;
-
-        time += timeStep;
-    }
+    console.log("Time:", time)
 
     return { flowRate, time };
 }
@@ -183,6 +189,7 @@ function drawReservoir() {
     ctx.fillText(`Altura: ${(fluidHeight / canvas.height * parseFloat(heightControl.value)).toFixed(3)} m`, 10, 20);
 }
 
+let initialTotalTime = totalTime;
 function updateReservoir() {
     if (isPaused) return;
 
@@ -202,15 +209,27 @@ function updateReservoir() {
     if (fluidHeight < 0) {
         fluidHeight = 0;
     }
-
+    
     drawReservoir();
 
-    totalTime -= timeStep;
+  
+     // Inicializa o tempo de início, se não estiver definido
+     if (!startTime) {
+        startTime = Date.now();
+    }
+
+    // Calcula o tempo decorrido desde o início da simulação
+    const currentTime = Date.now();
+    const elapsedTime = (currentTime - startTime) / 1000; // Em segundos
+
+    totalTime = Math.max(initialTotalTime - elapsedTime, 0); // Garante que não seja negativo
+
+    console.log("totalTime:", totalTime)
     timeLabel.textContent = `Tempo de Esvaziamento Restante: ${Math.max(totalTime, 0).toFixed(0)} s`;
     flowRateLabel.textContent = `Vazão: ${flowRate.toFixed(4)} m³/s (${flowRateLiters.toFixed(2)} L/s)`;
     heightText.textContent = `Altura da Lâmina d'Água: ${(fluidHeight / canvas.height * parseFloat(heightControl.value)).toFixed(2)} m`;
 
-    if (fluidHeight > 0 && totalTime > 0) {
+    if (totalTime > 0) {
         requestAnimationFrame(updateReservoir);
     }
 }
@@ -239,6 +258,9 @@ function togglePause() {
     pauseButton.textContent = isPaused ? 'Esvaziar' : 'Pausar';
 
     if (!isPaused) {
+        // Redefinir startTime e initialTotalTime quando começar uma nova simulação
+        startTime = Date.now();
+        initialTotalTime = totalTime;
         updateReservoir();
     }
 }
