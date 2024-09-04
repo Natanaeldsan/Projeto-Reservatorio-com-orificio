@@ -104,11 +104,15 @@ function drawReservoir() {
     const radiusSlider = document.getElementById('radiusSlider');
     
     const widthLabel = document.getElementById('widthLabel');
-    const heightLabel = document.getElementById('heightOrificioLabel');
     const widthControl = document.getElementById('width');
-    const heightControl = document.getElementById('heightOrificio');
     const widthSlider = document.getElementById('widthSlider');
-    const heightSlider = document.getElementById('heightOrificioSlider');
+
+
+    const heightOrificioLabel = document.getElementById('heightOrificioLabel');
+    const heightOrificioControl= document.getElementById('heightOrificio');
+    
+    const heightControl = document.getElementById('height');
+    const heightOrificioSlider = document.getElementById('heightOrificioSlider');
 
 
     function updateWidth() {
@@ -137,13 +141,12 @@ function drawReservoir() {
 
     }
     else if(orificeType== "retangular"){
-        
         widthLabel.style.display = 'block';
-        heightLabel.style.display = 'block';
         widthControl.style.display = 'block';
-        heightControl.style.display = 'block';
         widthSlider.style.display = 'block';
-        heightSlider.style.display = 'block';
+        heightOrificioLabel.style.display = 'block';
+        heightOrificioControl.style.display = 'block';
+        heightOrificioSlider.style.display = 'block';
     }
 
     
@@ -168,8 +171,8 @@ function drawReservoir() {
         ctx.strokeStyle = 'transparent'; // Remover a linha de contorno
         ctx.stroke();
     }
-
     ctx.fill();
+
     // Remover a linha de contorno
     ctx.strokeStyle = 'transparent';
     ctx.stroke();
@@ -177,7 +180,7 @@ function drawReservoir() {
     // Desenhar a altura da lâmina d'água
     ctx.fillStyle = '#FF0000';
     ctx.font = '16px Arial';
-    ctx.fillText(`Altura: ${(fluidHeight).toFixed(2)} m`, 10, 20);
+    ctx.fillText(`Altura: ${(fluidHeight / canvas.height * parseFloat(heightControl.value)).toFixed(3)} m`, 10, 20);
 }
 
 function updateReservoir() {
