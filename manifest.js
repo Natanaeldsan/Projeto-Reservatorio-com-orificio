@@ -66,13 +66,15 @@ function calculateFlowRateAndTime() {
     }
     
 
-    console.log(cd, outletArea, gravity, initialHeight)
+  
     // Cálculo da vazão
     const flowRate = Cd * outletArea * Math.sqrt(2 * gravity * initialHeight);
     
     // Cálculo do tempo total para esvaziar o reservatório
     let time = 0;
     let height = initialHeight;
+
+    
 
     while (height > 0) {
         const deltaHeight = (flowRate * timeStep) / (canvas.width / initialHeight); // Corrigido
@@ -176,7 +178,7 @@ function drawReservoir() {
     // Desenhar a altura da lâmina d'água
     ctx.fillStyle = '#FF0000';
     ctx.font = '16px Arial';
-    ctx.fillText(`Altura: ${(fluidHeight / canvas.height * parseFloat(heightControl.value)).toFixed(3)} m`, 10, 20);
+    ctx.fillText(`Altura: ${(fluidHeight).toFixed(2)} m`, 10, 20);
 }
 
 function updateReservoir() {
@@ -258,6 +260,8 @@ function syncSliders() {
     cdSlider.value = cdControl.value;
     radiusSlider.value = radiusControl.value;
     heightSlider.value = heightControl.value;
+    heightOrificioSlider.value= heightOrificioControl.value;
+    widthSlider.value= widthControl.value;
 }
 
 cdControl.addEventListener('input', () => {
