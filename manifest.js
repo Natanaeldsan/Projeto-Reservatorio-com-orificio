@@ -13,8 +13,18 @@ const timeLabel = document.getElementById('timeLabel');
 const flowRateLabel = document.getElementById('flowRateLabel');
 const heightText = document.getElementById('heightText');
 const pauseButton = document.getElementById('pauseButton');
-const heightOrificioLabel= document.getElementById('heightOrificioLabel')
-const heightOrificioLabelslider= document.getElementById('heightOrificioLabelslider')
+
+const heightOrificio= document.getElementById('heightOrificio')
+const heightOrificioControl= document.getElementById('heightOrificio')
+const heightOrificioSlider= document.getElementById('heightOrificioSlider')
+const heghtValueLabel = document.getElementById('heightOrificioLabel');
+const heightOrificioValue= document.getElementById('heightOrificioValue')
+
+const widthControl= document.getElementById('width')
+const widthSlider = document.getElementById('widthSlider');
+const widthValue= document.getElementById('widthValue');
+
+const width= document.getElementById('width')
 
 
 const storedData = localStorage.getItem('dadosReservatorio');
@@ -42,8 +52,20 @@ function adjustCanvasSize() {
 function calculateFlowRateAndTime() {
     const Cd = parseFloat(cdControl.value);
     const radius = parseFloat(radiusControl.value) / 100; // Convertendo para metros
-    const outletArea = Math.PI * Math.pow(radius, 2);
+    const heightOrificio= parseFloat(heightOrificioControl.value)/ 100
+    const width= parseFloat(widthControl.value)/100
     const initialHeight = parseFloat(heightControl.value);
+    let outletArea;
+    
+
+    if (orificeType=="circular"){
+        outletArea= Math.PI * Math.pow(radius, 2);
+    }
+    else if (orificeType=="retangular"){
+        outletArea = heightOrificio * width;
+    }
+    
+console.log(outletArea)
 
     // Cálculo da vazão
     const flowRate = Cd * outletArea * Math.sqrt(2 * gravity * initialHeight);
@@ -79,16 +101,37 @@ function drawReservoir() {
     const radiusLabel = document.getElementById('radiusLabel');
     const radiusControl = document.getElementById('radius');
     const radiusSlider = document.getElementById('radiusSlider');
-
+    
     const widthLabel = document.getElementById('widthLabel');
     const heightLabel = document.getElementById('heightOrificioLabel');
     const widthControl = document.getElementById('width');
-    const heightControl = document.getElementById('heightOrificio');
+    const heightControl = document.getElementById('height');
     const widthSlider = document.getElementById('widthSlider');
     const heightSlider = document.getElementById('heightOrificioSlider');
 
 
-
+    function updateWidth() {
+        widthControl.value = widthSlider.value;
+        widthValue.textContent = widthSlider.value;
+    }
+    
+    function updateHeight() {
+        heightOrificioControl.value = heightOrificioSlider.value;
+        heightOrificioValue.textContent = heightOrificioSlider.value;
+    }
+    function updateRadius() {
+        radiusControl.value = radiusSlider.value;
+        radiusValue.textContent = radiusSlider.value;
+    }
+    
+    // Add event listeners
+    widthSlider.addEventListener('input', updateWidth);
+    heightOrificioSlider.addEventListener('input', updateHeight);
+    radiusSlider.addEventListener('input', updateRadius);
+    
+    console.log()
+    
+    
     console.log(orificeType)
     if (orificeType== "circular"){
         radiusLabel.style.display = 'block';
@@ -97,6 +140,7 @@ function drawReservoir() {
 
     }
     else if(orificeType== "retangular"){
+        
         widthLabel.style.display = 'block';
         heightLabel.style.display = 'block';
         widthControl.style.display = 'block';
@@ -242,11 +286,23 @@ radiusSlider.addEventListener('input', () => {
     updateLabels();
     resetSimulation();
 });
+widthSlider.addEventListener('input', () => {
+    updateLabels();
+    resetSimulation();
+});
+
+heightOrificioSlider.addEventListener('input', () => {
+    updateLabels();
+    resetSimulation();
+});
+
 heightSlider.addEventListener('input', () => {
     heightControl.value = heightSlider.value;
     updateLabels();
     resetSimulation();
 });
+
+console.log(widthValue)
 
 pauseButton.addEventListener('click', togglePause);
 
