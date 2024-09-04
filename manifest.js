@@ -61,7 +61,6 @@ function calculateFlowRateAndTime() {
         outletArea= Math.PI * Math.pow(radius, 2);
     }
     else if (orificeType=="retangular"){
-        console.log(width, heightOrificio)
         outletArea = heightOrificio * width;
     }
     
