@@ -66,6 +66,7 @@ function calculateFlowRateAndTime() {
     }
     
 
+    console.log(cd, outletArea, gravity, initialHeight)
     // Cálculo da vazão
     const flowRate = Cd * outletArea * Math.sqrt(2 * gravity * initialHeight);
     
