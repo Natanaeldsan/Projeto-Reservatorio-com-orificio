@@ -24,7 +24,7 @@ const widthControl= document.getElementById('width')
 const widthSlider = document.getElementById('widthSlider');
 const widthValue= document.getElementById('widthValue');
 
-const width= document.getElementById('width')
+
 
 
 const storedData = localStorage.getItem('dadosReservatorio');
@@ -38,15 +38,14 @@ const orificeType= dadosReservatorio.tipoOrificio;
 
 
 const timeStep = 0.1; // Passo de tempo (s)
-let fluidHeight = canvas.height * parseFloat(heightControl.value)/data.profundidade; // Altura inicial do fluido
-console.log(fluidHeight)
+let fluidHeight = canvas.height; // Altura inicial do fluido
 let totalTime = 0; // Tempo total para esvaziar
 let isPaused = true; // Estado da simulação (inicialmente pausado)
 
 function adjustCanvasSize() {
     canvas.width = document.querySelector('.container').offsetWidth * 0.6; // Ajusta a largura do canvas
     canvas.height = 400; // Altura fixa para o canvas
-    fluidHeight = canvas.height * parseFloat(heightControl.value)/data.profundidade; // Redefine a altura do fluido
+    fluidHeight = canvas.height; // Redefine a altura do fluido
     drawReservoir(); // Redesenha o reservatório
 }
 
@@ -54,15 +53,15 @@ function calculateFlowRateAndTime() {
     const Cd = parseFloat(cdControl.value);
     const radius = parseFloat(radiusControl.value) / 100; // Convertendo para metros
     const heightOrificio= parseFloat(heightOrificioControl.value)/ 100
-    const width= parseFloat(widthControl.value)/100
+    const width= parseFloat(widthControl.value)/100;
     const initialHeight = parseFloat(heightControl.value);
     let outletArea;
-    
 
     if (orificeType=="circular"){
         outletArea= Math.PI * Math.pow(radius, 2);
     }
     else if (orificeType=="retangular"){
+        console.log(width, heightOrificio)
         outletArea = heightOrificio * width;
     }
     
@@ -87,7 +86,7 @@ function calculateFlowRateAndTime() {
 }
 
 function drawReservoir() {
-    ctx.clearRect(0, 0, canvas.width, fluidHeight);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Desenhar o reservatório
     ctx.fillStyle = '#000000';
@@ -105,14 +104,14 @@ function drawReservoir() {
     const widthLabel = document.getElementById('widthLabel');
     const heightLabel = document.getElementById('heightOrificioLabel');
     const widthControl = document.getElementById('width');
-    const heightControl = document.getElementById('height');
+    const heightControl = document.getElementById('heightOrificio');
     const widthSlider = document.getElementById('widthSlider');
     const heightSlider = document.getElementById('heightOrificioSlider');
 
 
     function updateWidth() {
-        widthControl.value = widthSlider.value;
-        widthValue.textContent = widthSlider.value;
+        const widthValue = widthSlider.value ;
+        widthControl.value = widthValue;
     }
     
     function updateHeight() {
@@ -128,7 +127,7 @@ function drawReservoir() {
     widthSlider.addEventListener('input', updateWidth);
     heightOrificioSlider.addEventListener('input', updateHeight);
     radiusSlider.addEventListener('input', updateRadius);
-
+    
     if (orificeType== "circular"){
         radiusLabel.style.display = 'block';
         radiusControl.style.display = 'block';
@@ -140,17 +139,11 @@ function drawReservoir() {
         widthLabel.style.display = 'block';
         heightLabel.style.display = 'block';
         widthControl.style.display = 'block';
-        heightOrificioControl.style.display = 'block';
+        heightControl.style.display = 'block';
         widthSlider.style.display = 'block';
         heightSlider.style.display = 'block';
     }
 
-        // Acessa os elementos
-        
-
-       
-     
-  
     
       // Adicionar o código para desenhar o orifício retangular
       if (orificeType === "retangular") {
@@ -178,9 +171,6 @@ function drawReservoir() {
     // Remover a linha de contorno
     ctx.strokeStyle = 'transparent';
     ctx.stroke();
-
-    
-  
     
     // Desenhar a altura da lâmina d'água
     ctx.fillStyle = '#FF0000';
@@ -299,11 +289,13 @@ radiusSlider.addEventListener('input', () => {
     resetSimulation();
 });
 widthSlider.addEventListener('input', () => {
+    widthControl.value = widthSlider.value;
     updateLabels();
     resetSimulation();
 });
 
 heightOrificioSlider.addEventListener('input', () => {
+   heightOrificioControl.value = heightOrificioSlider.value;
     updateLabels();
     resetSimulation();
 });
@@ -313,6 +305,8 @@ heightSlider.addEventListener('input', () => {
     updateLabels();
     resetSimulation();
 });
+
+
 
 pauseButton.addEventListener('click', togglePause);
 
