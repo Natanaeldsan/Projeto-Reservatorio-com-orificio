@@ -156,15 +156,28 @@ function drawReservoir() {
      
   
     
+      // Adicionar o código para desenhar o orifício retangular
+      if (orificeType === "retangular") {
+        const orificeWidth = parseFloat(widthControl.value) / 2; // Metade da largura para posicionamento
+        const orificeHeight = parseFloat(heightOrificioControl.value); // Altura do orifício
+        const orificeX = canvas.width - orificeWidth - 10; // Localização X do orifício
+        const orificeY = canvas.height - orificeHeight; // Localização Y do orifício
 
-    // Desenhar o orifício
-    const orificeRadius = parseFloat(radiusControl.value) / 2; // Raio do orifício em pixels
-    const orificeX = canvas.width - orificeRadius - 10; // Lado direito do canvas com margem
-    const orificeY = canvas.height - orificeRadius; // Localização do orifício na borda inferior
+        ctx.fillStyle = '#FF0000'; // Cor do orifício
+        ctx.fillRect(orificeX, orificeY, orificeWidth * 2, orificeHeight); // Desenhar o retângulo do orifício
+    } else if (orificeType === "circular") {
+        const orificeRadius = parseFloat(radiusControl.value) / 2; // Raio do orifício
+        const orificeX = canvas.width - orificeRadius - 10; // Localização X do orifício
+        const orificeY = canvas.height - orificeRadius; // Localização Y do orifício
 
-    ctx.beginPath();
-    ctx.arc(orificeX, orificeY, orificeRadius, 0, 2 * Math.PI);
-    ctx.fillStyle = '#FF0000'; // Cor do orifício
+        ctx.beginPath();
+        ctx.arc(orificeX, orificeY, orificeRadius, 0, 2 * Math.PI);
+        ctx.fillStyle = '#FF0000'; // Cor do orifício
+        ctx.fill();
+        ctx.strokeStyle = 'transparent'; // Remover a linha de contorno
+        ctx.stroke();
+    }
+
     ctx.fill();
     // Remover a linha de contorno
     ctx.strokeStyle = 'transparent';
