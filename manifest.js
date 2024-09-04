@@ -38,14 +38,15 @@ const orificeType= dadosReservatorio.tipoOrificio;
 
 
 const timeStep = 0.1; // Passo de tempo (s)
-let fluidHeight = canvas.height; // Altura inicial do fluido
+let fluidHeight = canvas.height * parseFloat(heightControl.value)/data.profundidade; // Altura inicial do fluido
+console.log(fluidHeight)
 let totalTime = 0; // Tempo total para esvaziar
 let isPaused = true; // Estado da simulação (inicialmente pausado)
 
 function adjustCanvasSize() {
     canvas.width = document.querySelector('.container').offsetWidth * 0.6; // Ajusta a largura do canvas
     canvas.height = 400; // Altura fixa para o canvas
-    fluidHeight = canvas.height; // Redefine a altura do fluido
+    fluidHeight = canvas.height * parseFloat(heightControl.value)/data.profundidade; // Redefine a altura do fluido
     drawReservoir(); // Redesenha o reservatório
 }
 
@@ -65,7 +66,6 @@ function calculateFlowRateAndTime() {
         outletArea = heightOrificio * width;
     }
     
-console.log(outletArea)
 
     // Cálculo da vazão
     const flowRate = Cd * outletArea * Math.sqrt(2 * gravity * initialHeight);
@@ -87,7 +87,7 @@ console.log(outletArea)
 }
 
 function drawReservoir() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.width, fluidHeight);
 
     // Desenhar o reservatório
     ctx.fillStyle = '#000000';
@@ -128,11 +128,7 @@ function drawReservoir() {
     widthSlider.addEventListener('input', updateWidth);
     heightOrificioSlider.addEventListener('input', updateHeight);
     radiusSlider.addEventListener('input', updateRadius);
-    
-    console.log()
-    
-    
-    console.log(orificeType)
+
     if (orificeType== "circular"){
         radiusLabel.style.display = 'block';
         radiusControl.style.display = 'block';
@@ -144,7 +140,7 @@ function drawReservoir() {
         widthLabel.style.display = 'block';
         heightLabel.style.display = 'block';
         widthControl.style.display = 'block';
-        heightControl.style.display = 'block';
+        heightOrificioControl.style.display = 'block';
         widthSlider.style.display = 'block';
         heightSlider.style.display = 'block';
     }
@@ -182,6 +178,9 @@ function drawReservoir() {
     // Remover a linha de contorno
     ctx.strokeStyle = 'transparent';
     ctx.stroke();
+
+    
+  
     
     // Desenhar a altura da lâmina d'água
     ctx.fillStyle = '#FF0000';
@@ -314,8 +313,6 @@ heightSlider.addEventListener('input', () => {
     updateLabels();
     resetSimulation();
 });
-
-console.log(widthValue)
 
 pauseButton.addEventListener('click', togglePause);
 
