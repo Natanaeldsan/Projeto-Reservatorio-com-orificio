@@ -103,6 +103,7 @@ function drawReservoir() {
     // Desenhar o fluido
     ctx.fillStyle = '#007BFF';
     ctx.fillRect(0, canvas.height - fluidHeight, canvas.width, fluidHeight);
+
     
     
     const radiusLabel = document.getElementById('radiusLabel');
@@ -201,35 +202,25 @@ function updateReservoir() {
     const flowRate = Cd * outletArea * Math.sqrt(2 * gravity * heightInMeters);
     const flowRateLiters = flowRate * 1000; // Converte de m³/s para L/s
 
-    // Corrigir o cálculo de deltaHeight
-    const deltaHeight = (flowRate * timeStep * canvas.height) / (canvas.width * parseFloat(heightControl.value));
+    // Atualizar a altura do fluido de forma proporcional ao tempo decorrido
+    const elapsedTime = (Date.now() - startTime) / 1000; // Tempo decorrido em segundos
+    const totalHeightReduction = canvas.height * (elapsedTime / totalTime); // Proporção da altura que deve reduzir com base no tempo
 
-    fluidHeight -= deltaHeight;
+    fluidHeight = canvas.height - totalHeightReduction;
 
     if (fluidHeight < 0) {
         fluidHeight = 0;
     }
-    
+
     drawReservoir();
 
-  
-     // Inicializa o tempo de início, se não estiver definido
-     if (!startTime) {
-        startTime = Date.now();
-    }
-
-    // Calcula o tempo decorrido desde o início da simulação
-    const currentTime = Date.now();
-    const elapsedTime = (currentTime - startTime) / 1000; // Em segundos
-
-    totalTime = Math.max(initialTotalTime - elapsedTime, 0); // Garante que não seja negativo
-
-    console.log("totalTime:", totalTime)
-    timeLabel.textContent = `Tempo de Esvaziamento Restante: ${Math.max(totalTime, 0).toFixed(0)} s`;
+    // Atualiza o tempo restante e outros elementos de visualização
+    const remainingTime = Math.max(totalTime - elapsedTime, 0); // Tempo restante
+    timeLabel.textContent = `Tempo de Esvaziamento Restante: ${remainingTime.toFixed(0)} s`;
     flowRateLabel.textContent = `Vazão: ${flowRate.toFixed(4)} m³/s (${flowRateLiters.toFixed(2)} L/s)`;
     heightText.textContent = `Altura da Lâmina d'Água: ${(fluidHeight / canvas.height * parseFloat(heightControl.value)).toFixed(2)} m`;
 
-    if (totalTime > 0) {
+    if (remainingTime > 0) {
         requestAnimationFrame(updateReservoir);
     }
 }
